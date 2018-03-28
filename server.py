@@ -144,6 +144,7 @@ def disconnected():
         pass
 
     try:
+        emit("leaveGame", room = users[usr1])
         del users[usr1]
         del users[usr2]
         del games[usr1]
@@ -156,8 +157,6 @@ def disconnected():
         del sid_username[usr1]
     except KeyError:
         pass
-
-    emit("leaveGame", room=users[usr1])
 
     print("User disconnected with SID:", usr1)
     print(users)
