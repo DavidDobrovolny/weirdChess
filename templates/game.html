@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weird chess</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <style>
+        html
+        {
+            text-align: center;
+        }
+
+        body
+        {
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+        }
+
+        .board
+        {
+            background: #FCD616;
+            margin: -2px 0px;
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() {
+	var socket = io.connect('http://127.0.0.1:5000');
+
+	var inLobby = false;
+	var inGame = false;
+
+	var myTurn = true;
+	var selected = "";
+
+	var moves = {};
+	var board = "";
+
+
+	$(".board").click(function()
+    {
+        if(!myTurn) return;
+
+        if(selected == "")
+        {
+            if(this.id in moves)
+            {
+                selected = this.id;
+                $(this).css("background", "#a3fc16"); // select
+
+                for(var move in moves[selected])
+                {
+                    $("#" + moves[selected][move]).css("background", "#fc7c17");
+                }
+            }
+        }
+        else
+        {
+            if (selected == this.id)
+            {
+                $(this).css("background", "#FCD616"); // deselect
+
+                for(move in moves[selected])
+                {
+                    $("#" + moves[selected][move]).css("background", "#FCD616");
+                }
+
+                selected = "";
+            }
+            else
+            {
+                $("#" + selected).css("background", "#FCD616"); // deselect old
+
+                for(move in moves[selected])
+                {
+                    $("#" + moves[selected][move]).css("background", "#FCD616");
+                }
+
+                if(moves[selected].indexOf(this.id) != -1)
+                {
+                    socket.emit("turn", selected + "/" + this.id); // making move
+                    myTurn = false;
+                    $("#turns").text("Opponent's turn");
+                    selected = "";
+                }
+                else if(this.id in moves)
+                {
+                    selected = this.id;
+                    $(this).css("background", "#a3fc16"); // select new
+
+                    for(var move in moves[selected])
+                    {
+                        $("#" + moves[selected][move]).css("background", "#fc7c17");
+                    }
+                }
+                else selected = "";
+            }
+        }
+    });
+
+	socket.on("madeTurn", function(b, mov)
+    {
+       myTurn = true;
+       $("#turns").text("Your turn");
+
+       board = b;
+       printBoard();
+
+       moves = JSON.parse(mov);
+       console.log(moves);
+    });
+
+	socket.on("updateBoard", function(b)
+    {
+        board = b;
+        printBoard();
+    });
+
+	$("#join").on("click", function()
+    {
+        socket.emit("requestJoin");
+    });
+
+	socket.on("joinGame", function(num, nick, b, mov)
+    {
+        alert("Joined game!");
+        inGame = true;
+        if(num == 1)
+        {
+            myTurn = true;
+            $("#side").text("You are playing as white");
+            $("#turns").text("Your turn");
+        }
+        else
+        {
+            myTurn = false;
+            $("#side").text("You are playing as black");
+            $("#turns").text("Opponent's turn");
+        }
+
+        $("#friend").attr("disabled", true);
+        $("#friendJoin").attr("disabled", true);
+        $("#lobbyJoin").attr("disabled", true);
+
+        $("#friend").val(nick);
+
+        board = b;
+        printBoard();
+
+        moves = JSON.parse(mov);
+    });
+
+	socket.on("leaveGame", function()
+    {
+        alert("Other player disconnected!");
+        inGame = false;
+        inLobby = false;
+
+        selected = "";
+        moves = {};
+
+        $("#friend").attr("disabled", false);
+        $("#friendJoin").attr("disabled", false);
+        $("#lobbyJoin").attr("disabled", false);
+
+        $("#friend").val("");
+    });
+
+	socket.on("endGame", function(res)
+    {
+        if(res == 0) alert("You lost.");
+        if(res == 1) alert("You won!");
+        if(res == 2) alert("You resigned.");
+        if(res == 3) alert("Your opponent resigned.");
+
+        inGame = false;
+        inLobby = false;
+
+        $("#friend").attr("disabled", false);
+        $("#friendJoin").attr("disabled", false);
+        $("#lobbyJoin").attr("disabled", false);
+
+        $("#friend").val("");
+
+        moves = {};
+    });
+
+	function printBoard()
+    {
+        var lines = board.split("/");
+
+        var pieces = {
+            "f" : "swordsman",
+            "m" : "marksman",
+            "s" : "sapper",
+            "n" : "necromancer",
+            "p" : "spearman",
+            "g" : "guardian",
+            "w" : "mage",
+            "b" : "berserk",
+            "o" : "mine"
+        };
+
+        for(var x = 0; x < 9; x++)
+        {
+            for(var y = 0; y < 9; y++)
+            {
+                var piece = lines[y][x];
+
+                if(piece == ".")
+                {
+                    $("#" + x + "x" + y).attr("src", "/static/empty.png");
+                }
+                else
+                {
+                    var name = "";
+                    var color = "";
+
+                    name = pieces[piece.toLowerCase()];
+
+                    if (piece == piece.toLowerCase()) color = "W";
+                    else color = "B";
+
+                    $("#" + x + "x" + y).attr("src", "/static/" + name + color + ".png");
+                }
+            }
+        }
+    }
+
+	$(window).on("beforeunload", function (e)
+    {
+        socket.emit("diss");
+        return null;
+    });
+
+	$("#nickButton").on("click", function()
+    {
+        $("#nickInput").attr("disabled", true);
+        $("#nickButton").attr("disabled", true);
+        socket.emit("setUsername", $("#nickInput").val());
+    });
+
+	socket.on("setNick", function(name)
+    {
+        $("#nickInput").val(name);
+    });
+
+	$("#lobbyJoin").on("click", function()
+    {
+        if(!inGame && !inLobby)
+        {
+            inLobby = true;
+            socket.emit("joinLobby");
+
+            $("#friend").attr("disabled", true);
+            $("#friendJoin").attr("disabled", true);
+        }
+        else
+        {
+            inLobby = false;
+            socket.emit("leaveLobby");
+
+            $("#friend").attr("disabled", false);
+            $("#friendJoin").attr("disabled", false);
+            $("#lobbyJoin").attr("disabled", false);
+        }
+    });
+
+    $("#friendJoin").on("click", function()
+    {
+        if(!inGame) socket.emit("joinFriend", $("#friend").val());
+        $("#friend").attr("disabled", true);
+        $("#friendJoin").attr("disabled", true);
+        $("#lobbyJoin").attr("disabled", true);
+    });
+
+    socket.on("noFriend", function()
+    {
+        alert("Username does not exist.");
+        $("#friend").attr("disabled", false);
+        $("#friendJoin").attr("disabled", false);
+        $("#lobbyJoin").attr("disabled", false);
+    });
+
+    $("#resign").on("click", function()
+    {
+        socket.emit("resign");
+    });
+});
+
+</script>
+
+<h1>Weird chess</h1>
+
+Your username: <span id="nick"></span> <input id="nickInput" type="text"/><button id="nickButton">Set username</button> <br><br>
+
+Your opponent: <input type="text" id="friend"><button id="friendJoin">Join friend</button><button id="lobbyJoin">Join random</button> <br><br>
+
+<script type="text/javascript">
+
+    for(var i = 0; i < 9; i++)
+    {
+        for(var j = 0; j < 9; j++)
+        {
+            var coords = j + "x" + i;
+            document.write('<input id=' + coords + ' class="board" height="50" width="50" type="image" src="/static/empty.png"/>');
+        }
+
+        document.write("<br>");
+    }
+
+</script>
+
+<span id="side"></span><br>
+<span id="turns"></span><br>
+<button id="resign">Resign</button>
+
+</body>
+</html>
