@@ -135,25 +135,31 @@ def joinTwo(usr1):
 
 @socketio.on("disconnect")
 def disconnected():
-    user = request.sid
-
-    if user not in users.keys():
-        return
+    usr1 = request.sid
+    usr2 = users[usr1]
 
     try:
-        del games[user]
-        del games[users[user]]
-        del username_sid[sid_username[user]]
-        del sid_username[user]
+        lobby.remove(usr1)
+    except ValueError:
+        pass
+
+    try:
+        del users[usr1]
+        del users[usr2]
+        del games[usr1]
+        del games[usr2]
     except KeyError:
         pass
 
-    if user in users.keys():
-        emit("leaveGame", room=users[user])
-        del users[users[user]]
-    del users[user]
+    try:
+        del username_sid[sid_username[usr1]]
+        del sid_username[usr1]
+    except KeyError:
+        pass
 
-    print("User disconnected with SID:", user)
+    emit("leaveGame", room=users[usr1])
+
+    print("User disconnected with SID:", usr1)
     print(users)
 
 @socketio.on("diss")
