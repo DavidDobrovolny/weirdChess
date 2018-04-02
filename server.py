@@ -235,6 +235,10 @@ def takeTurn(turn):
             del games[usr]
             del usersAI[usr]
 
+            return
+
+        socketio.sleep(0.5)
+
         theGame.make_move(usersAI[usr].choose(theGame))
 
         board = theGame.board_to_text()
@@ -244,9 +248,9 @@ def takeTurn(turn):
 
         if theGame.state != -1:
             if theGame.state == theGame.currentPlayer:
-                emit("endGame", 0, room=usr)
-            elif theGame.state == 3 - theGame.currentPlayer:
                 emit("endGame", 1, room=usr)
+            elif theGame.state == 3 - theGame.currentPlayer:
+                emit("endGame", 0, room=usr)
 
             del games[usr]
             del usersAI[usr]
@@ -254,16 +258,25 @@ def takeTurn(turn):
 @socketio.on("resign")
 def handle_resign():
     usr1 = request.sid
-    usr2 = users[usr1]
 
-    emit("endGame", 2, room=usr1)
-    emit("endGame", 3, room=usr2)
+    if usr1 in users.keys():
+        usr2 = users[usr1]
 
-    del games[usr1]
-    del games[usr2]
+        emit("endGame", 2, room=usr1)
+        emit("endGame", 3, room=usr2)
 
-    del users[usr1]
-    del users[usr2]
+        del games[usr1]
+        del games[usr2]
+
+        del users[usr1]
+        del users[usr2]
+
+    elif usr1 in usersAI.keys():
+        emit("endGame", 2, room=usr1)
+
+        del games[usr1]
+        del usersAI[usr1]
+
 
 if __name__ == '__main__':
     socketio.run(app)
