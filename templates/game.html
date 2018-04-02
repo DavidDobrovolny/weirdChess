@@ -146,6 +146,7 @@ $(document).ready(function() {
         $("#friend").attr("disabled", true);
         $("#friendJoin").attr("disabled", true);
         $("#lobbyJoin").attr("disabled", true);
+        $("#aiJoin").attr("disabled", true);
 
         $("#friend").val(nick);
 
@@ -167,6 +168,7 @@ $(document).ready(function() {
         $("#friend").attr("disabled", false);
         $("#friendJoin").attr("disabled", false);
         $("#lobbyJoin").attr("disabled", false);
+        $("#aiJoin").attr("disabled", false);
 
         $("#friend").val("");
     });
@@ -184,6 +186,7 @@ $(document).ready(function() {
         $("#friend").attr("disabled", false);
         $("#friendJoin").attr("disabled", false);
         $("#lobbyJoin").attr("disabled", false);
+        $("#aiJoin").attr("disabled", false);
 
         $("#friend").val("");
 
@@ -259,6 +262,7 @@ $(document).ready(function() {
 
             $("#friend").attr("disabled", true);
             $("#friendJoin").attr("disabled", true);
+            $("#aiJoin").attr("disabled", true);
         }
         else
         {
@@ -268,6 +272,7 @@ $(document).ready(function() {
             $("#friend").attr("disabled", false);
             $("#friendJoin").attr("disabled", false);
             $("#lobbyJoin").attr("disabled", false);
+            $("#aiJoin").attr("disabled", false);
         }
     });
 
@@ -277,6 +282,16 @@ $(document).ready(function() {
         $("#friend").attr("disabled", true);
         $("#friendJoin").attr("disabled", true);
         $("#lobbyJoin").attr("disabled", true);
+        $("#aiJoin").attr("disabled", true);
+    });
+
+    $("#aiJoin").on("click", function()
+    {
+        socket.emit("joinAI");
+        $("#friend").attr("disabled", true);
+        $("#friendJoin").attr("disabled", true);
+        $("#lobbyJoin").attr("disabled", true);
+        $("#aiJoin").attr("disabled", true);
     });
 
     socket.on("noFriend", function()
@@ -299,7 +314,7 @@ $(document).ready(function() {
 
 Your username: <span id="nick"></span> <input id="nickInput" type="text"/><button id="nickButton">Set username</button> <br><br>
 
-Your opponent: <input type="text" id="friend"><button id="friendJoin">Join friend</button><button id="lobbyJoin">Join random</button> <br><br>
+Your opponent: <input type="text" id="friend"><button id="friendJoin">Join friend</button><button id="lobbyJoin">Join random</button><button id="aiJoin">Play against AI</button> <br><br>
 
 <script type="text/javascript">
 

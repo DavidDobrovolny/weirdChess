@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, send, emit
 import random
 
 import game
+from randomPlayer import RandomPlayer
 
 
 app = Flask(__name__)
@@ -14,7 +15,10 @@ socketio = SocketIO(app, ping_timeout=50, ping_interval=30)
 
 lobby = []
 users = {}
+usersAI = {}
 games = {}
+
+aiPool = [RandomPlayer]
 
 username_sid = {}
 sid_username = {}
@@ -42,11 +46,27 @@ def join_lobby():
     user = request.sid
 
     lobby.append(user)
-    joinTwo(user)
+    join_two(user)
 
 @socketio.on("leaveLobby")
 def leave_lobby():
     lobby.remove(request.sid)
+
+@socketio.on("setUsername")
+def username(name):
+    userId = request.sid
+    suffix = "".join([random.choice([str(x) for x in range(0, 10)]) for _ in range(0, 4)])
+
+    while name + suffix in username_sid.keys():
+        suffix = "".join([random.choice([str(x) for x in range(0, 10)]) for _ in range(0, 4)])
+
+    username_sid[name + suffix] = userId
+    sid_username[userId] = name + suffix
+
+    print(username_sid)
+    print(sid_username)
+
+    emit("setNick", name + suffix)
 
 @socketio.on("joinFriend")
 def join_friend(name):
@@ -87,23 +107,7 @@ def join_friend(name):
     emit("joinGame", (start, usr2name, board, moves), room = usr1)
     emit("joinGame", (1 - start, usr1name, board, moves), room = usr2)
 
-@socketio.on("setUsername")
-def username(name):
-    userId = request.sid
-    suffix = "".join([random.choice([str(x) for x in range(0, 10)]) for _ in range(0, 4)])
-
-    while name + suffix in username_sid.keys():
-        suffix = "".join([random.choice([str(x) for x in range(0, 10)]) for _ in range(0, 4)])
-
-    username_sid[name + suffix] = userId
-    sid_username[userId] = name + suffix
-
-    print(username_sid)
-    print(sid_username)
-
-    emit("setNick", name + suffix)
-
-def joinTwo(usr1):
+def join_two(usr1):
     freeUsers = [x for x in lobby if x != usr1]
 
     if len(freeUsers) < 1:
@@ -132,6 +136,30 @@ def joinTwo(usr1):
 
     emit("joinGame", (start, usr2name, board, moves), room = usr1)
     emit("joinGame", (1 - start, usr1name, board, moves), room = usr2)
+
+@socketio.on("joinAI")
+def join_ai():
+    usr = request.sid
+    start = random.choice((0, 1))
+
+    ai = random.choice(aiPool)(start + 1)
+    usersAI[usr] = ai
+
+    newGame = game.Game()
+    games[usr] = newGame
+
+    board = newGame.board_to_text()
+    moves = newGame.moves_to_json()
+
+    emit("joinGame", (1 - start, "AI", board, moves), room=usr)
+
+    if start == 1:
+        newGame.make_move(ai.choose(newGame))
+
+        board = newGame.board_to_text()
+        moves = newGame.moves_to_json()
+
+        emit("madeTurn", (board, moves), room=usr)
 
 @socketio.on("disconnect")
 def disconnected():
@@ -177,22 +205,51 @@ def takeTurn(turn):
     board = theGame.board_to_text()
     moves = theGame.moves_to_json()
 
-    emit("madeTurn", (board, moves), room=users[usr])
-    emit("updateBoard", board, room=usr)
+    if usr in users.keys():
+        emit("madeTurn", (board, moves), room=users[usr])
+        emit("updateBoard", board, room=usr)
 
-    if theGame.state != -1:
-        if theGame.state == theGame.currentPlayer:
-            emit("endGame", 0, room=usr)
-            emit("endGame", 1, room=users[usr])
-        elif theGame.state == 3 - theGame.currentPlayer:
-            emit("endGame", 1, room = usr)
-            emit("endGame", 0, room = users[usr])
+        if theGame.state != -1:
+            if theGame.state == theGame.currentPlayer:
+                emit("endGame", 0, room=usr)
+                emit("endGame", 1, room=users[usr])
+            elif theGame.state == 3 - theGame.currentPlayer:
+                emit("endGame", 1, room = usr)
+                emit("endGame", 0, room = users[usr])
 
-        del games[users[usr]]
-        del games[usr]
+            del games[users[usr]]
+            del games[usr]
 
-        del users[users[usr]]
-        del users[usr]
+            del users[users[usr]]
+            del users[usr]
+
+    elif usr in usersAI.keys():
+        emit("updateBoard", board, room=usr)
+
+        if theGame.state != -1:
+            if theGame.state == theGame.currentPlayer:
+                emit("endGame", 0, room=usr)
+            elif theGame.state == 3 - theGame.currentPlayer:
+                emit("endGame", 1, room=usr)
+
+            del games[usr]
+            del usersAI[usr]
+
+        theGame.make_move(usersAI[usr].choose(theGame))
+
+        board = theGame.board_to_text()
+        moves = theGame.moves_to_json()
+
+        emit("madeTurn", (board, moves), room=usr)
+
+        if theGame.state != -1:
+            if theGame.state == theGame.currentPlayer:
+                emit("endGame", 0, room=usr)
+            elif theGame.state == 3 - theGame.currentPlayer:
+                emit("endGame", 1, room=usr)
+
+            del games[usr]
+            del usersAI[usr]
 
 @socketio.on("resign")
 def handle_resign():
