@@ -5,6 +5,7 @@ import random
 
 import game
 from randomPlayer import RandomPlayer
+from negamax import NegamaxPlayer
 
 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ users = {}
 usersAI = {}
 games = {}
 
-aiPool = [RandomPlayer]
+aiPool = [NegamaxPlayer]
 
 username_sid = {}
 sid_username = {}
@@ -142,7 +143,7 @@ def join_ai():
     usr = request.sid
     start = random.choice((0, 1))
 
-    ai = random.choice(aiPool)(start + 1)
+    ai = random.choice(aiPool)(2 - start)
     usersAI[usr] = ai
 
     newGame = game.Game()
@@ -154,6 +155,8 @@ def join_ai():
     emit("joinGame", (1 - start, "AI", board, moves), room=usr)
 
     if start == 1:
+        socketio.sleep(0.5)
+
         newGame.make_move(ai.choose(newGame))
 
         board = newGame.board_to_text()
@@ -239,7 +242,7 @@ def takeTurn(turn):
 
         socketio.sleep(0.5)
 
-        theGame.make_move(usersAI[usr].choose(theGame))
+        socketio.start_background_task(theGame.make_move, usersAI[usr].choose(theGame))
 
         board = theGame.board_to_text()
         moves = theGame.moves_to_json()

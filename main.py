@@ -3,6 +3,7 @@ import game
 from randomPlayer import RandomPlayer
 from greedy import Greedy
 from mcts import MCTS
+from negamax import NegamaxPlayer
 
 import time
 
@@ -31,19 +32,19 @@ def evaluate(gameInst):
 
     return value
 
-player1 = RandomPlayer(1)
+player1 = NegamaxPlayer(1, d=1)
 player2 = RandomPlayer(2)
 
 wins = [0, 0, 0]
 
 t = time.time()
 
-for i in range(0, 10):
+for i in range(0, 1):
     print(i)
     theGame = game.Game()
 
     while theGame.state == -1:
-        #print(evaluate(theGame))
+        print(evaluate(theGame))
         if theGame.currentPlayer == 1:
             choice = player1.choose(theGame)
         else:
