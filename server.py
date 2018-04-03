@@ -2,6 +2,8 @@ from flask import Flask, request, render_template
 from flask_socketio import SocketIO, send, emit
 
 import random
+import time
+import _thread
 
 import game
 from randomPlayer import RandomPlayer
@@ -11,7 +13,7 @@ from negamax import NegamaxPlayer
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 
-socketio = SocketIO(app, ping_timeout=50, ping_interval=30)
+socketio = SocketIO(app, ping_timeout=50, ping_interval=30, async_mode="threading")
 
 
 lobby = []
@@ -156,13 +158,7 @@ def join_ai():
 
     if start == 1:
         socketio.sleep(0.5)
-
-        newGame.make_move(ai.choose(newGame))
-
-        board = newGame.board_to_text()
-        moves = newGame.moves_to_json()
-
-        emit("madeTurn", (board, moves), room=usr)
+        _thread.start_new_thread(aiTurn, (newGame, ai, usr))
 
 @socketio.on("disconnect")
 def disconnected():
@@ -242,21 +238,30 @@ def takeTurn(turn):
 
         socketio.sleep(0.5)
 
-        socketio.start_background_task(theGame.make_move, usersAI[usr].choose(theGame))
+        _thread.start_new_thread(aiTurn, (games[usr], usersAI[usr], usr))
 
         board = theGame.board_to_text()
         moves = theGame.moves_to_json()
 
         emit("madeTurn", (board, moves), room=usr)
 
+def aiTurn(theGame, ai, opponent):
+    with app.test_request_context('/game'):
+        theGame.make_move(ai.choose(theGame))
+
+        board = theGame.board_to_text()
+        moves = theGame.moves_to_json()
+
+        socketio.emit("madeTurn", (board, moves), room = opponent)
+
         if theGame.state != -1:
             if theGame.state == theGame.currentPlayer:
-                emit("endGame", 1, room=usr)
+                socketio.emit("endGame", 1, room = opponent)
             elif theGame.state == 3 - theGame.currentPlayer:
-                emit("endGame", 0, room=usr)
+                socketio.emit("endGame", 0, room = opponent)
 
-            del games[usr]
-            del usersAI[usr]
+            del games[opponent]
+            del usersAI[opponent]
 
 @socketio.on("resign")
 def handle_resign():
