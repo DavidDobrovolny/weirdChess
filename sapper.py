@@ -66,17 +66,10 @@ class Mine(pieceBase.Piece):
             if game.is_enemy(self.x + dx, self.y + dy, self.color)\
                     and game.board[self.y + dy][self.x + dx].is_killable(game):
                 moves.append(
-                    moveObj.Move(self, self.x, self.y, self.x + dx, self.y + dy, removed=(game.board[self.y + dy][self.x + dx],))
+                    moveObj.Move(self, self.x, self.y, self.x + dx, self.y + dy, removed=(game.board[self.y + dy][self.x + dx], self))
                 )
 
         return moves
-
-    def move(self, game, move):
-        if game.board[self.y][self.x] == self:
-            game.board[self.y][self.x] = None
-
-        self.x = move.newX
-        self.y = move.newY
 
     def undo_move(self, game, move):
         game.board[move.oldY][move.oldX] = self

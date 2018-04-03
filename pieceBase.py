@@ -68,7 +68,7 @@ class Piece:
         self.x = move.oldX
         self.y = move.oldY
 
-    def add(self, game, fromGraveyard=True):
+    def add(self, game):
         """
         Adds this piece.
 
