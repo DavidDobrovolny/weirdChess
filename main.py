@@ -3,20 +3,21 @@ import game
 from randomPlayer import RandomPlayer
 from greedy import Greedy
 from mcts import MCTS
+from mctsMem import MCTSMemory
 from negamax import NegamaxPlayer
 
 import time
 
 def evaluate(gameInst):
     values = {
-        "Swordsman" : 1,
-        "Marksman" : 4,
-        "Sapper" : 2,
-        "Necromancer" : 1000,
-        "Spearman" : 3,
-        "Guardian" : 6,
-        "Mage" : 2,
-        "Berserk" : 5,
+        "Swordsman" : 0,
+        "Marksman" : 0,
+        "Sapper" : 0,
+        "Necromancer" : 0000,
+        "Spearman" : 0,
+        "Guardian" : 0,
+        "Mage" : 1,
+        "Berserk" : 0,
         "Mine" : 0
     }
 
@@ -32,26 +33,32 @@ def evaluate(gameInst):
 
     return value
 
-player1 = NegamaxPlayer(1, d=1)
-player2 = RandomPlayer(2)
+def simulate(n, p1, p2, verbose=0):
+    wins = [0, 0, 0]
 
-wins = [0, 0, 0]
+    t = time.time()
 
-t = time.time()
+    for i in range(0, n):
+        print(i)
+        theGame = game.Game()
 
-for i in range(0, 1):
-    print(i)
-    theGame = game.Game()
+        while theGame.state == -1:
+            if verbose > 0:
+                value = evaluate(theGame)
+                print(value)
+            if theGame.currentPlayer == 1:
 
-    while theGame.state == -1:
-        print(evaluate(theGame))
-        if theGame.currentPlayer == 1:
-            choice = player1.choose(theGame)
-        else:
-            choice = player2.choose(theGame)
+                choice = p1.choose(theGame)
+            else:
+                choice = p2.choose(theGame)
 
-        theGame.make_move(choice)
+            theGame.make_move(choice)
 
-    wins[theGame.state] += 1
+        wins[theGame.state] += 1
 
-print(wins, time.time() - t)
+    print(wins, "Time spent:", time.time() - t, "Time spent per game:", (time.time() - t)/n)
+
+player1 = RandomPlayer(1)
+player2 = MCTSMemory(2, t=5)
+
+simulate(1, player1, player2, verbose=1)

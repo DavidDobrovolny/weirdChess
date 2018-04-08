@@ -75,6 +75,12 @@ class Game:
         :return: None
         """
 
+        possible = self.get_possible_moves()
+
+        if all([x != move for x in possible]):
+            print(move.piece)
+            raise ValueError("Invalid move")
+
         self.moves.append(move)
 
         move.piece.move(self, move)
@@ -99,16 +105,16 @@ class Game:
         """
         move = self.moves.pop()
 
+        move.piece.undo_move(self, move)
+
         for piece in move.added:
-            piece.remove(self)
+            piece.undo_add(self)
 
         for piece in move.removed:
-            piece.add(self)
+            piece.undo_remove(self)
 
         for moved in move.moved:
             moved.piece.undo_move(self, moved)
-
-        move.piece.undo_move(self, move)
 
         self.currentPlayer = 3 - self.currentPlayer
         self.state = -1
@@ -166,7 +172,7 @@ class Game:
         :return: None
         """
 
-        if self.p1necroDead and self.p2necroDead:
+        if len(self.get_possible_moves()) == 0 or (self.p1necroDead and self.p2necroDead):
             self.state = 0
 
         if self.p1necroDead:

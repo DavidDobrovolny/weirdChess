@@ -19,17 +19,16 @@ class Necromancer(pieceBase.Piece):
 
         return moves
 
-    def add(self, game, fromGraveyard=True):
+    def undo_remove(self, game):
         game.board[self.y][self.x] = self
 
-        if fromGraveyard:
-            if self.color == 1:
-                game.p1graveyard.pop(0)
-                game.p1necroDead = False
+        if self.color == 1:
+            game.p1graveyard.pop()
+            game.p1necroDead = False
 
-            elif self.color == 2:
-                game.p2graveyard.pop(0)
-                game.p2necroDead = False
+        elif self.color == 2:
+            game.p2graveyard.pop()
+            game.p2necroDead = False
 
     def remove(self, game):
         if game.board[self.y][self.x] == self:

@@ -25,3 +25,7 @@ class Move:
         self.added = added
         self.removed = removed
         self.moved = moved
+
+    def __eq__(self, other):
+        return (self.piece, self.oldX, self.oldY, self.newX, self.newY, self.added, self.removed, self.moved) ==\
+               (other.piece, other.oldX, other.oldY, other.newX, other.newY, other.added, other.removed, other.moved)

@@ -12,6 +12,9 @@ class Piece:
         self.y = y
         self.color = col
 
+    def __eq__(self, other):
+        return other is not None and (self.x, self.y, self.color, type(self)) == (other.x, other.y, other.color, type(other))
+
     def get_possible_moves(self, game):
         """
         Returns all possible moves for this piece.
@@ -73,7 +76,6 @@ class Piece:
         Adds this piece.
 
         :param game: game instance
-        :param fromGraveyard: should piece be pulled from graveyard
         :return: None
         """
 
@@ -85,12 +87,28 @@ class Piece:
         elif self.color == 2:
             game.p2graveyard.pop(0)
 
+    def undo_add(self, game):
+        """
+        Removes this piece.
+
+        :param game: game instance
+        :return: None
+        """
+
+        if game.board[self.y][self.x] == self:
+            game.board[self.y][self.x] = None
+
+        if self.color == 1:
+            game.p1graveyard.insert(0, self)
+
+        elif self.color == 2:
+            game.p2graveyard.insert(0, self)
+
     def remove(self, game):
         """
         Removes this piece.
 
         :param game: game instance
-        :param toGraveyard: should piece be added to graveyard
         :return: None
         """
 
@@ -102,3 +120,19 @@ class Piece:
 
         elif self.color == 2:
             game.p2graveyard.append(self)
+
+    def undo_remove(self, game):
+        """
+        Undoes removing this piece.
+
+        :param game: game instance
+        :return: None
+        """
+
+        game.board[self.y][self.x] = self
+
+        if self.color == 1:
+            game.p1graveyard.pop()
+
+        elif self.color == 2:
+            game.p2graveyard.pop()

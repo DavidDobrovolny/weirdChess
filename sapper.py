@@ -5,22 +5,6 @@ class Sapper(pieceBase.Piece):
     def __init__(self, x, y, col):
         super().__init__(x, y, col)
 
-    def move(self, game, move):
-        game.board[move.newY][move.newX] = self
-        if game.board[self.y][self.x] == self:
-            game.board[self.y][self.x] = None
-
-        self.x = move.newX
-        self.y = move.newY
-
-    def undo_move(self, game, move):
-        game.board[move.oldY][move.oldX] = self
-        if game.board[self.y][self.x] == self:
-            game.board[self.y][self.x] = None
-
-        self.x = move.oldX
-        self.y = move.oldY
-
     def get_possible_moves(self, game):
         moves = []
 
@@ -80,6 +64,12 @@ class Mine(pieceBase.Piece):
     def add(self, game):
         game.board[self.y][self.x] = self
 
+    def undo_add(self, game):
+        self.remove(game)
+
     def remove(self, game):
         if game.board[self.y][self.x] == self:
             game.board[self.y][self.x] = None
+
+    def undo_remove(self, game):
+        self.add(game)

@@ -8,6 +8,8 @@ import _thread
 import game
 from randomPlayer import RandomPlayer
 from negamax import NegamaxPlayer
+from mcts import MCTS
+from mctsMem import MCTSMemory
 
 
 app = Flask(__name__)
@@ -237,13 +239,7 @@ def takeTurn(turn):
             return
 
         socketio.sleep(0.5)
-
         _thread.start_new_thread(aiTurn, (games[usr], usersAI[usr], usr))
-
-        board = theGame.board_to_text()
-        moves = theGame.moves_to_json()
-
-        emit("madeTurn", (board, moves), room=usr)
 
 def aiTurn(theGame, ai, opponent):
     with app.test_request_context('/game'):
