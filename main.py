@@ -10,15 +10,15 @@ import time
 
 def evaluate(gameInst):
     values = {
-        "Swordsman" : 0,
-        "Marksman" : 0,
-        "Sapper" : 0,
-        "Necromancer" : 0000,
-        "Spearman" : 0,
-        "Guardian" : 0,
-        "Mage" : 1,
-        "Berserk" : 0,
-        "Mine" : 0
+        "Swordsman": 1,
+        "Marksman": 4,
+        "Sapper": 2,
+        "Necromancer": 1000,
+        "Spearman": 3,
+        "Guardian": 6,
+        "Mage": 2,
+        "Berserk": 5,
+        "Mine": 0
     }
 
     value = 0
