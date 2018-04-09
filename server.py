@@ -15,7 +15,7 @@ from mctsMem import MCTSMemory
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 
-socketio = SocketIO(app, ping_timeout=50, ping_interval=30, async_mode="threading")
+socketio = SocketIO(app, ping_timeout=50, ping_interval=30)
 
 
 lobby = []
