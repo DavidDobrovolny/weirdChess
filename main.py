@@ -45,7 +45,7 @@ def simulate(n, p1, p2, verbose=0):
         while theGame.state == -1:
             if verbose > 0:
                 value = evaluate(theGame)
-                print(value)
+                print(value, len(theGame.get_possible_moves()))
             if theGame.currentPlayer == 1:
 
                 choice = p1.choose(theGame)
@@ -59,6 +59,6 @@ def simulate(n, p1, p2, verbose=0):
     print(wins, "Time spent:", time.time() - t, "Time spent per game:", (time.time() - t)/n)
 
 player1 = RandomPlayer(1)
-player2 = NegamaxPlayer(2, d=1)
+player2 = NegamaxPlayer(2, d=2)
 
-simulate(10, player1, player2, verbose=0)
+simulate(1, player1, player2, verbose=1)

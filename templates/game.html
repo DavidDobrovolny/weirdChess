@@ -29,6 +29,9 @@
 </head>
 <body>
 <script type="text/javascript">
+    var boardX = 7;
+	var boardY = 7;
+
 $(document).ready(function() {
 	var socket = io.connect('http://' + document.domain + ':' + location.port);
 
@@ -208,9 +211,9 @@ $(document).ready(function() {
             "o" : "mine"
         };
 
-        for(var x = 0; x < 9; x++)
+        for(var x = 0; x < boardX; x++)
         {
-            for(var y = 0; y < 9; y++)
+            for(var y = 0; y < boardY; y++)
             {
                 var piece = lines[y][x];
 
@@ -317,9 +320,9 @@ Your opponent: <input type="text" id="friend"><button id="friendJoin">Join frien
 
 <script type="text/javascript">
 
-    for(var i = 0; i < 9; i++)
+    for(var i = 0; i < boardX; i++)
     {
-        for(var j = 0; j < 9; j++)
+        for(var j = 0; j < boardY; j++)
         {
             var coords = j + "x" + i;
             document.write('<input id=' + coords + ' class="board" height="50" width="50" type="image" src="/static/empty.png"/>');

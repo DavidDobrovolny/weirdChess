@@ -33,7 +33,7 @@ class Game:
         self.moves = []
 
     def build_board(self):
-        with open("plan.txt", "r") as plan:
+        with open("plan2.txt", "r") as plan:
             planTxt = plan.readlines()
             planTxt = [line.replace(" ", "")[:-1] for line in planTxt]
 
@@ -55,7 +55,7 @@ class Game:
                 if self.board[y][x] is not None or planTxt[y][x] == ".":
                     continue
                 self.board[y][x] = pieceDict[planTxt[y][x]](x, y, 2)
-                self.board[len(planTxt) - y - 1][x] = pieceDict[planTxt[y][x]](x, len(planTxt) - y - 1, 1)
+                self.board[len(planTxt) - y - 1][len(planTxt[0]) - x - 1] = pieceDict[planTxt[y][x]](len(planTxt[0]) - x - 1, len(planTxt) - y - 1, 1)
 
     def get_possible_moves(self):
         moves = []

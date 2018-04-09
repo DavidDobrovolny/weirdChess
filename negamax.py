@@ -10,9 +10,9 @@ class NegamaxPlayer:
         self.theGame = copy.deepcopy(gameInst)
 
         _, otherMove = self.negamax(self.depth, -100000, 1000000, -(self.number * 2 - 3))
-        moveToMake = [x for x in gameInst.get_possible_moves() if (x.oldX, x.oldY, x.newX, x.newY) == (otherMove.oldX, otherMove.oldY, otherMove.newX, otherMove.newY)][0]
+        #moveToMake = [x for x in gameInst.get_possible_moves() if (x.oldX, x.oldY, x.newX, x.newY) == (otherMove.oldX, otherMove.oldY, otherMove.newX, otherMove.newY)][0]
 
-        return moveToMake
+        return otherMove
 
     def negamax(self, depth, alpha, beta, color):
         if depth == 0 or self.theGame.state != -1:
@@ -36,12 +36,6 @@ class NegamaxPlayer:
                 break
 
         return bestValue, bestMove
-
-class Node:
-    def __init__(self, m, v):
-        self.move = m
-        self.value = v
-        self.childMoves = []
 
 def evaluate(gameInst):
     values = {
