@@ -2,8 +2,8 @@ import pieceBase
 import moveObj
 
 class Spearman(pieceBase.Piece):
-    def __init__(self, x, y, col):
-        super().__init__(x, y, col)
+    def __init__(self, x, y, col, newId=-1):
+        super().__init__(x, y, col, newId)
 
     def get_possible_moves(self, game):
         moves = []

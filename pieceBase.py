@@ -1,19 +1,27 @@
 class Piece:
-    def __init__(self, x, y, col):
+    number = 0
+    def __init__(self, x, y, col, newId=-1):
         """
         Piece base object
 
         :param x: x coordinate
         :param y: y coordinate
         :param col: color of piece, 1/2
+        :param newId: id of piece
         """
 
         self.x = x
         self.y = y
         self.color = col
 
+        if newId == -1:
+            self.id = Piece.number
+            Piece.number += 1
+        else:
+            self.id = newId
+
     def __eq__(self, other):
-        return other is not None and (self.x, self.y, self.color, type(self)) == (other.x, other.y, other.color, type(other))
+        return other is not None and self.id == other.id
 
     def get_possible_moves(self, game):
         """

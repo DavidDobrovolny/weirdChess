@@ -3,8 +3,8 @@ import moveObj
 import copy
 
 class Mage(pieceBase.Piece):
-    def __init__(self, x, y, col):
-        super().__init__(x, y, col)
+    def __init__(self, x, y, col, newId=-1):
+        super().__init__(x, y, col, newId)
 
     def get_possible_moves(self, game):
         moves = []
@@ -15,15 +15,6 @@ class Mage(pieceBase.Piece):
 
             movedR = () if game.is_free(self.x + dx, self.y + dy) else\
                 (moveObj.Move(game.board[self.y + dy][self.x + dx], self.x + dx, self.y + dy, self.x, self.y),)
-
-            # if movedR == ():
-            #     movedA = ()
-            #
-            # else:
-            #     movedA = (copy.copy(movedR[0]),)
-            #
-            #     movedA[0].x = self.x
-            #     movedA[0].y = self.y
 
             moves.append(
                 moveObj.Move(

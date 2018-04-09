@@ -59,6 +59,6 @@ def simulate(n, p1, p2, verbose=0):
     print(wins, "Time spent:", time.time() - t, "Time spent per game:", (time.time() - t)/n)
 
 player1 = RandomPlayer(1)
-player2 = MCTSMemory(2, t=5)
+player2 = NegamaxPlayer(2, d=1)
 
-simulate(1, player1, player2, verbose=1)
+simulate(10, player1, player2, verbose=0)

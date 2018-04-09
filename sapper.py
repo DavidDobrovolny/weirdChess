@@ -2,8 +2,11 @@ import pieceBase
 import moveObj
 
 class Sapper(pieceBase.Piece):
-    def __init__(self, x, y, col):
-        super().__init__(x, y, col)
+    def __init__(self, x, y, col, newId=-1):
+        super().__init__(x, y, col, newId)
+
+        if newId == -1:
+            pieceBase.Piece.number += 1  # one id reserved for mine
 
     def get_possible_moves(self, game):
         moves = []
@@ -19,7 +22,7 @@ class Sapper(pieceBase.Piece):
                                      self.y,
                                      x,
                                      y,
-                                     added=(Mine(self.x, self.y, self.color),),
+                                     added=(Mine(self.x, self.y, self.color, self.id + 1),),
                                      removed=(mine,) if mine is not None else tuple()
                                      ))
 
@@ -40,8 +43,8 @@ class Sapper(pieceBase.Piece):
         return None
 
 class Mine(pieceBase.Piece):
-    def __init__(self, x, y, col):
-        super().__init__(x, y, col)
+    def __init__(self, x, y, col, newId=-1):
+        super().__init__(x, y, col, newId)
 
     def get_possible_moves(self, game):
         moves = []
