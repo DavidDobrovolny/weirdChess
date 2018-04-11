@@ -23,7 +23,7 @@ users = {}
 usersAI = {}
 games = {}
 
-aiPool = [MCTSMemory]
+aiPool = [NegamaxPlayer]
 
 username_sid = {}
 sid_username = {}
