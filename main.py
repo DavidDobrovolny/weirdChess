@@ -5,6 +5,7 @@ from greedy import Greedy
 from mcts import MCTS
 from mctsMem import MCTSMemory
 from negamax import NegamaxPlayer
+from negamax2 import NegamaxPlayer2
 
 import time
 
@@ -35,6 +36,10 @@ def evaluate(gameInst):
 
 def simulate(n, p1, p2, verbose=0):
     wins = [0, 0, 0]
+    p1turns = 0
+    p2turns = 0
+    p1time = 0
+    p2time = 0
 
     t = time.time()
 
@@ -47,18 +52,29 @@ def simulate(n, p1, p2, verbose=0):
                 value = evaluate(theGame)
                 print(value, len(theGame.get_possible_moves()))
             if theGame.currentPlayer == 1:
+                turnTime = time.time()
 
                 choice = p1.choose(theGame)
+
+                p1time += time.time() - turnTime
+                p1turns += 1
             else:
+                turnTime = time.time()
+
                 choice = p2.choose(theGame)
+
+                p2time += time.time() - turnTime
+                p2turns += 1
 
             theGame.make_move(choice)
 
         wins[theGame.state] += 1
 
     print(wins, "Time spent:", time.time() - t, "Time spent per game:", (time.time() - t)/n)
+    print("Player 1 time spent per turn:", p1time/p1turns)
+    print("Player 2 time spent per turn:", p2time/p2turns)
 
 player1 = RandomPlayer(1)
-player2 = NegamaxPlayer(2, d=2)
+player2 = NegamaxPlayer2(2, d=3)
 
 simulate(1, player1, player2, verbose=1)
