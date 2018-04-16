@@ -40,7 +40,7 @@ class Piece:
         :return: True if killable, else False
         """
 
-        for dx, dy in [(x, y) for x in (-1, 0, 1) for y in (-1, 0, 1) if not (x == y == 0)]:
+        for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
             if game.is_ally(self.x + dx, self.y + dy, self.color):
                 if type(game.board[self.y + dy][self.x + dx]).__name__ == "Guardian":
                     return False
