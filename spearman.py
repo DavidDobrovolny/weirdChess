@@ -8,7 +8,7 @@ class Spearman(pieceBase.Piece):
     def get_possible_moves(self, game):
         moves = []
 
-        for (dx, dy) in ((1, 1), (-1, 1), (1, -1), (-1, -1)):
+        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             for i in range(1, game.height + game.width):
                 if game.is_free(self.x + i*dx, self.y + i*dy):
                     moves.append(moveObj.Move(self, self.x, self.y, self.x + i*dx, self.y + i*dy))
@@ -16,7 +16,7 @@ class Spearman(pieceBase.Piece):
                     break
 
 
-        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        for (dx, dy) in ((1, 1), (-1, 1), (1, -1), (-1, -1)):
             if game.is_enemy(self.x + dx, self.y + dy, self.color) and game.board[self.y + dy][self.x + dx].is_killable(game):
                 killed = game.board[self.y + dy][self.x + dx]
                 if type(killed).__name__ == "Mine":
