@@ -9,7 +9,7 @@ class Guardian(pieceBase.Piece):
         moves = []
 
         for dx, dy in [(x, y) for x in (-1, 0, 1) for y in (-1, 0, 1) if not (x == y == 0)]:
-            if game.is_enemy(self.x + dx, self.y + dy, self.color) and game.board[self.y - dy][self.x - dx].is_killable(game):
+            if game.is_enemy(self.x + dx, self.y + dy, self.color) and game.board[self.y + dy][self.x + dx].is_killable(game):
                 killed = (game.board[self.y + dy][self.x + dx],)
             else:
                 killed = ()
