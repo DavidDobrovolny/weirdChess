@@ -1,6 +1,10 @@
 import copy
 
 class NegamaxPlayer:
+    """
+    Negamax with alpha-beta pruning
+    """
+
     def __init__(self, num, d=2):
         self.number = num
         self.depth = d
@@ -30,6 +34,7 @@ class NegamaxPlayer:
             v = -v
             bestValue = max(bestValue, v)
             bestMove = move if v == bestValue else bestMove
+            alpha = max(alpha, v)
             self.theGame.undo_move()
 
             if alpha >= beta:
