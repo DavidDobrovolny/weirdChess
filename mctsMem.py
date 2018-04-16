@@ -44,7 +44,7 @@ class MCTSMemory:
                 gameCopy.make_move(choice)
                 i += 1
 
-            win = gameCopy.state == currentMove.color
+            win = gameCopy.state != currentMove.color
 
             currentMove.backpropagate(win)
 
@@ -52,8 +52,7 @@ class MCTSMemory:
                 gameCopy.undo_move()
                 i -= 1
 
-            bz = gameCopy.board == gameInst.board
-
+        #print(sorted([x.wins for x in self.moveTree.childMoves], reverse=True))
         chosen = max(self.moveTree.childMoves, key=lambda x: x.wins)
         self.moveTree = chosen
 
@@ -67,6 +66,7 @@ class MCTSMemory:
             self.move = m
             self.color = c
             self.wins = 0
+            self.simulations = 0
 
             self.parent = p
             self.childMoves = []
@@ -74,6 +74,8 @@ class MCTSMemory:
         def backpropagate(self, win):
             if win:
                 self.wins += 1
+
+            self.simulations += 1
 
             if self.parent is not None:
                 self.parent.backpropagate(not win)

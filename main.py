@@ -2,8 +2,11 @@ import game
 
 from randomPlayer import RandomPlayer
 from greedy import Greedy
+
 from mcts import MCTS
 from mctsMem import MCTSMemory
+from mctsEC import MCTSEarlyCutout
+
 from negamax import NegamaxPlayer
 from negamax2 import NegamaxPlayer2
 
