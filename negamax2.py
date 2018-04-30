@@ -1,11 +1,12 @@
 import copy
+import random
 
 class NegamaxPlayer2:
     """
     Negamax with alpha-beta pruning and iterative deepening for move ordering
     """
 
-    def __init__(self, num, d=4):
+    def __init__(self, num, d=3):
         self.number = num
         self.depth = d
         self.theGame = None
@@ -13,12 +14,14 @@ class NegamaxPlayer2:
 
     def choose(self, gameInst):
         self.theGame = copy.deepcopy(gameInst)
-        self.moveTree = Node(None, self.number)
+        self.moveTree = Node(None)
 
         for i in range(1, self.depth+1):
-            self.negamax(self.moveTree, i, -100000, 100000, (self.number * 2 - 3))
+            self.negamax(self.moveTree, i, -100000, 100000, -(self.number * 2 - 3))
 
-        return max(self.moveTree.childMoves, key=lambda x: x.value).move
+        random.shuffle(self.moveTree.childMoves)
+
+        return min(self.moveTree.childMoves, key=lambda x: x.value).move
 
     def negamax(self, node, depth, alpha, beta, color):
         if depth == 0 or self.theGame.state != -1:
@@ -27,15 +30,13 @@ class NegamaxPlayer2:
             return
 
         if len(node.childMoves) == 0:
-            node.childMoves = [Node(x, -color) for x in self.theGame.get_possible_moves()]
+            node.childMoves = [Node(x) for x in self.theGame.get_possible_moves()]
 
         bestValue = -100000
         bestMove = None
 
         for moveNode in node.childMoves:
             self.theGame.make_move(moveNode.move)
-            if moveNode not in node.childMoves:
-                node.childMoves.append(moveNode)
 
             self.negamax(moveNode, depth-1, -beta, -alpha, -color)
 
@@ -57,10 +58,9 @@ class NegamaxPlayer2:
         return
 
 class Node:
-    def __init__(self, m, c):
+    def __init__(self, m):
         self.move = m
-        self.color = c
-        self.value = 0
+        self.value = -10000
         self.childMoves = []
 
 def evaluate(gameInst):
