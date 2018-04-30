@@ -9,6 +9,7 @@ import game
 from randomPlayer import RandomPlayer
 from negamax import NegamaxPlayer
 from negamax2 import NegamaxPlayer2
+from negamax2qe import NegamaxPlayer2QE
 
 from mcts import MCTS
 from mctsMem import MCTSMemory
@@ -26,7 +27,7 @@ users = {}
 usersAI = {}
 games = {}
 
-aiPool = [NegamaxPlayer2]
+aiPool = [NegamaxPlayer2QE]
 
 username_sid = {}
 sid_username = {}
