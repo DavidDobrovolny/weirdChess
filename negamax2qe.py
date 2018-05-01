@@ -17,8 +17,6 @@ class NegamaxPlayer2QE:
         self.theGame = copy.deepcopy(gameInst)
         self.moveTree = Node(None)
 
-        self.moveTree.value = evaluate(self.theGame)
-
         for i in range(1, self.depth+1):
             self.negamax(self.moveTree, i, -100000, 100000, (self.number * 2 - 3), 0)
 
