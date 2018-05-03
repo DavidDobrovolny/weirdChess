@@ -92,6 +92,6 @@ def simulate(n, p1, p2, verbose=0):
         input()
 
 player1 = NegamaxPlayer2QE(1, d=3)
-player2 = RandomPlayer(2)
+player2 = NegamaxPlayer2QE(2, d=3)
 
 simulate(1, player1, player2, verbose=1)
