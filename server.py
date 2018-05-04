@@ -166,7 +166,7 @@ def join_ai():
 
     if start == 1:
         socketio.sleep(0.5)
-        socketio.start_background_task(aiTurn, (newGame, ai, usr))
+        socketio.start_background_task(aiTurn, newGame, ai, usr)
 
 @socketio.on("disconnect")
 def disconnected():
@@ -245,7 +245,7 @@ def takeTurn(turn):
             return
 
         socketio.sleep(0.5)
-        socketio.start_background_task(aiTurn, (games[usr], usersAI[usr], usr))
+        socketio.start_background_task(aiTurn, games[usr], usersAI[usr], usr)
 
 def aiTurn(theGame, ai, opponent):
     with app.test_request_context('/game'):
