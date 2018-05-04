@@ -11,6 +11,7 @@ from mctsEC import MCTSEarlyCutout
 from negamax import NegamaxPlayer
 from negamax2 import NegamaxPlayer2
 from negamax2qe import NegamaxPlayer2QE
+from negamax2qeKm import NegamaxPlayer2QEKM
 
 import time
 
@@ -91,7 +92,7 @@ def simulate(n, p1, p2, verbose=0):
     if verbose > 1: # to keep plot from closing
         input()
 
-player1 = NegamaxPlayer2QE(1, d=3)
-player2 = NegamaxPlayer2QE(2, d=3)
+player1 = NegamaxPlayer2QEKM(1, d=5)
+player2 = RandomPlayer(2)
 
 simulate(1, player1, player2, verbose=1)
