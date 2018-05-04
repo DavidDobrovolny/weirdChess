@@ -10,6 +10,7 @@ from randomPlayer import RandomPlayer
 from negamax import NegamaxPlayer
 from negamax2 import NegamaxPlayer2
 from negamax2qe import NegamaxPlayer2QE
+from negamax2qeKm import NegamaxPlayer2QEKM
 
 from mcts import MCTS
 from mctsMem import MCTSMemory
@@ -19,7 +20,7 @@ from mctsEC import MCTSEarlyCutout
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 
-socketio = SocketIO(app, ping_timeout=50, ping_interval=30, async_mode="threading")
+socketio = SocketIO(app, ping_timeout=50, ping_interval=30)#, async_mode="threading")
 
 
 lobby = []
@@ -27,7 +28,7 @@ users = {}
 usersAI = {}
 games = {}
 
-aiPool = [NegamaxPlayer2QE]
+aiPool = [NegamaxPlayer2QEKM]
 
 username_sid = {}
 sid_username = {}
