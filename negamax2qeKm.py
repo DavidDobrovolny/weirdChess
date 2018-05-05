@@ -7,7 +7,7 @@ class NegamaxPlayer2QEKM:
     Uses quick evaluation
     """
 
-    def __init__(self, num, d=3):
+    def __init__(self, num, d=5):
         self.number = num
         self.depth = d
         self.theGame = None
