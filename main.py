@@ -84,6 +84,7 @@ def simulate(n, p1, p2, verbose=0):
                 time.sleep(1)
 
         wins[theGame.state] += 1
+        print(wins)
 
     print(wins, "Time spent:", time.time() - t, "Time spent per game:", (time.time() - t)/n)
     print("Player 1 time spent per turn:", p1time/p1turns)
@@ -92,7 +93,7 @@ def simulate(n, p1, p2, verbose=0):
     if verbose > 1: # to keep plot from closing
         input()
 
-player1 = NegamaxPlayer2QEKM(1, d=5)
-player2 = RandomPlayer(2)
+player1 = NegamaxPlayer2QEKM(1, d=4)
+player2 = NegamaxPlayer2QEKM(2, d=3)
 
-simulate(1, player1, player2, verbose=1)
+simulate(10, player1, player2, verbose=0)
