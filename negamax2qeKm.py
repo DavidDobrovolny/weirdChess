@@ -7,7 +7,7 @@ class NegamaxPlayer2QEKM:
     Uses quick evaluation
     """
 
-    def __init__(self, num, d=3):
+    def __init__(self, num, d=5):
         self.number = num
         self.depth = d
         self.theGame = None
@@ -29,6 +29,9 @@ class NegamaxPlayer2QEKM:
         return min(self.moveTree.childMoves, key=lambda x: x.value).move
 
     def negamax(self, node, depth, alpha, beta, color, pValue):
+        if self.theGame.state != -1:
+            return
+
         if len(node.childMoves) == 0:
             node.childMoves = [Node(x) for x in self.theGame.get_possible_moves()]
 
@@ -51,6 +54,7 @@ class NegamaxPlayer2QEKM:
             node.childMoves.remove(bestMove)
             node.childMoves.insert(0, bestMove)
 
+            node.value = bestValue
             return
 
         bestValue = -100000
