@@ -220,6 +220,25 @@ class Game:
 
         return text[:-1]
 
+    def moves_to_dict(self):
+        """
+        Converts possible moves to dictionary
+
+        :return: (start coordinates) : [(end coordinates)]
+        """
+
+        moves = self.get_possible_moves()
+
+        movesDict = {}
+
+        for move in moves:
+            if (move.oldX, move.oldY) not in movesDict.keys():
+                movesDict[(move.oldX, move.oldY)] = []
+
+            movesDict[(move.oldX, move.oldY)].append((move.newX, move.newY))
+
+        return movesDict
+
     def moves_to_json(self):
         """
         Converts possible moves to json
@@ -238,6 +257,9 @@ class Game:
             movesDict[str(move.oldX) + "x" + str(move.oldY)].append(str(move.newX) + "x" + str(move.newY))
 
         return json.dumps(movesDict)
+
+    def tuple_to_string(self, t):
+        return str(t[0]) + "x" + str(t[1]) + "/" + str(t[2]) + "x" + str(t[3])
 
     def string_to_move(self, moveStr):
         old, new = moveStr.split("/")
