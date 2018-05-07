@@ -1,5 +1,5 @@
 import game
-import gui
+import debugGui
 
 from randomPlayer import RandomPlayer
 from greedy import Greedy
@@ -48,7 +48,7 @@ def simulate(n, p1, p2, verbose=0):
     p2time = 0
 
     if verbose > 1:
-        g = gui.BoardGUI()
+        g = debugGui.BoardGUI()
 
     t = time.time()
 
