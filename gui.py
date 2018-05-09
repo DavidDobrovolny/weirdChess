@@ -1,4 +1,5 @@
 import os
+import datetime
 import random
 import tkinter
 from PIL import Image, ImageTk
@@ -42,7 +43,8 @@ def click(x, y):
         selected = (-1, -1)
 
         window.update()
-        window.after(500, ai_move())
+        if theGame.state == -1:
+            window.after(500, ai_move())
 
     elif selected != (-1, -1):
         deselect(*selected)
@@ -102,6 +104,26 @@ def update_board():
     p1graveyard.configure(text="White graveyard\n" + "\n".join([type(x).__name__ for x in theGame.p1graveyard]))
     p2graveyard.configure(text="Black graveyard\n" + "\n".join([type(x).__name__ for x in theGame.p2graveyard]))
 
+    if theGame.state != -1:
+        end_game()
+
+def end_game():
+    currentTime = datetime.datetime.today()
+
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
+
+    with open("logs/log_{0.year}_{0.month}_{0.day}_{0.hour}_{0.minute}_{0.second}.txt".format(currentTime), "w") as f:
+        f.write(str(start))
+        f.write("\n")
+
+        f.write(str(theGame.state))
+        f.write("\n")
+
+        for m in theGame.moves:
+            f.write("{0.oldX}x{0.oldY}/{0.newX}x{0.newY}\n".format(m))
+
+
 theGame = game.Game()
 
 moves = theGame.moves_to_dict()
@@ -109,7 +131,7 @@ selected = (-1, -1)
 
 start = random.choice((1, 2))
 
-AI = NegamaxPlayer2QEKM(start, d=3)
+AI = NegamaxPlayer2QEKM(start, d=1)
 
 update_board()
 window.update()
