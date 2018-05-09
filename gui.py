@@ -21,7 +21,13 @@ for imageName in imageNames:
 for y in range(0, 7):
     for x in range(0, 7):
         buttons[y][x] = tkinter.Button(window, image=images["empty"], width=50, height=50, bg="beige", command=lambda x=x, y=y: click(x, y))
-        buttons[y][x].grid(row=y, column=x)
+        buttons[y][x].grid(row=y, column=x+1)
+
+p1graveyard = tkinter.Label(window, width=20, height=25, text="White graveyard", anchor="n")
+p2graveyard = tkinter.Label(window, width=20, height=25, text="Black graveyard", anchor="n")
+
+p1graveyard.grid(row=0, column=0, rowspan=7)
+p2graveyard.grid(row=0, column=8, rowspan=7)
 
 def click(x, y):
     global selected, moves
@@ -92,6 +98,9 @@ def update_board():
                 image = imageChars[lines[y][x].lower()] + color
 
             buttons[y][x].configure(image=images[image])
+
+    p1graveyard.configure(text="White graveyard\n" + "\n".join([type(x).__name__ for x in theGame.p1graveyard]))
+    p2graveyard.configure(text="Black graveyard\n" + "\n".join([type(x).__name__ for x in theGame.p2graveyard]))
 
 theGame = game.Game()
 
