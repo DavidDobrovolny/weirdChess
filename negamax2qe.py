@@ -33,7 +33,7 @@ class NegamaxPlayer2QE:
             bestValue = -100000
 
             for moveNode in node.childMoves:
-                moveNode.value = -evaluate_move(moveNode.move) * color + pValue
+                moveNode.value = -color * (evaluate_move(moveNode.move) + pValue)
 
                 if -moveNode.value > bestValue:
                     bestValue = -moveNode.value
@@ -50,7 +50,7 @@ class NegamaxPlayer2QE:
         for moveNode in node.childMoves:
             self.theGame.make_move(moveNode.move)
 
-            self.negamax(moveNode, depth-1, -beta, -alpha, -color, evaluate_move(moveNode.move) * color + pValue)
+            self.negamax(moveNode, depth-1, -beta, -alpha, -color, evaluate_move(moveNode.move) + pValue)
 
             if -moveNode.value > bestValue:
                 bestValue = -moveNode.value

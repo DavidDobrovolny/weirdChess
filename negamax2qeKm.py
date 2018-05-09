@@ -22,7 +22,7 @@ class NegamaxPlayer2QEKM:
         self.killers = [[] for _ in range(0, self.depth + 1)]
 
         for i in range(1, self.depth+1):
-            self.negamax(self.moveTree, i, -100000, 100000, (self.number * 2 - 3), 0)
+            self.negamax(self.moveTree, i, -100000, 100000, -(self.number * 2 - 3), 0)
 
         random.shuffle(self.moveTree.childMoves)
 
@@ -45,7 +45,7 @@ class NegamaxPlayer2QEKM:
             bestValue = -100000
 
             for moveNode in node.childMoves:
-                moveNode.value = -evaluate_move(moveNode.move) * color + pValue
+                moveNode.value = -color * (evaluate_move(moveNode.move) + pValue)
 
                 if -moveNode.value > bestValue:
                     bestValue = -moveNode.value
@@ -63,7 +63,7 @@ class NegamaxPlayer2QEKM:
         for moveNode in node.childMoves:
             self.theGame.make_move(moveNode.move)
 
-            self.negamax(moveNode, depth-1, -beta, -alpha, -color, evaluate_move(moveNode.move) * color + pValue)
+            self.negamax(moveNode, depth-1, -beta, -alpha, -color, evaluate_move(moveNode.move) + pValue)
 
             if -moveNode.value > bestValue:
                 bestValue = -moveNode.value
@@ -134,6 +134,6 @@ def evaluate_move(move):
         value += values[type(piece).__name__] * (1 if piece.color == 1 else -1)
 
     for piece in move.removed:
-        value += values[type(piece).__name__] * (1 if piece.color == 1 else -1)
+        value += values[type(piece).__name__] * (-1 if piece.color == 1 else 1)
 
     return value
