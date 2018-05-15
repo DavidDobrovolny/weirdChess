@@ -13,6 +13,9 @@ class NegamaxPlayer2QE:
         self.theGame = None
         self.moveTree = None
 
+    def __str__(self):
+        return "Negamax2QE, depth {0.depth}".format(self)
+
     def choose(self, gameInst):
         self.theGame = copy.deepcopy(gameInst)
         self.moveTree = Node(None)

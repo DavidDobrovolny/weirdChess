@@ -10,6 +10,9 @@ class NegamaxPlayer:
         self.depth = d
         self.theGame = None
 
+    def __str__(self):
+        return "Negamax depth {0.depth}".format(self)
+
     def choose(self, gameInst):
         self.theGame = copy.deepcopy(gameInst)
 

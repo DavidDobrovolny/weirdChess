@@ -15,6 +15,9 @@ class NegamaxPlayer2QEKM:
 
         self.killers = [[] for _ in range(0, self.depth + 1)]
 
+    def __str__(self):
+        return "Negamax2QEKM, depth {0.depth}".format(self)
+
     def choose(self, gameInst):
         self.theGame = copy.deepcopy(gameInst)
         self.moveTree = Node(None)

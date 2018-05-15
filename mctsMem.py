@@ -14,6 +14,9 @@ class MCTSMemory:
 
         self.moveTree = self.Node(None, 1, None)
 
+    def __str__(self):
+        return "MCTSMem, depth {0.depth}, thinkTime {0.thinkTime}".format(self)
+
     def choose(self, gameInst):
         gameCopy = copy.deepcopy(gameInst)
 

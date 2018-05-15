@@ -13,6 +13,9 @@ class MCTSEarlyCutout:
         self.thinkTime = t
         self.depth = d
 
+    def __str__(self):
+        return "MCTSEarlyCutout, depth {0.depth}, thinkTime {0.thinkTime}".format(self)
+
     def choose(self, gameInst):
         gameCopy = copy.deepcopy(gameInst)
 
