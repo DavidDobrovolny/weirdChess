@@ -33,9 +33,8 @@ class Game:
         self.moves = []
 
     def build_board(self):
-        with open("plan2.txt", "r") as plan:
-            planTxt = plan.readlines()
-            planTxt = [line.replace(" ", "")[:-1] for line in planTxt]
+        planTxt = ["N S b s . . .", "M g 1 . . . .", "m 1 . . . . .", "s . . . . . .", ". . . . . . .", ". . . . . . .", ". . . . . . ."]
+        planTxt = [line.replace(" ", "") for line in planTxt]
 
         pieceDict = {
             "s": Swordsman,
