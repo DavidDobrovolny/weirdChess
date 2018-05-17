@@ -157,7 +157,7 @@ def start_game(difficulty):
 
     start = random.choice((1, 2))
 
-    AI = [RandomPlayer(start), NegamaxPlayer2QEKM(3), NegamaxMCTSPlayerB(start, d2=10, t=5, b=10)][difficulty]
+    AI = [RandomPlayer(start), NegamaxPlayer2QEKM(start, d=3), NegamaxMCTSPlayerB(start, d2=10, t=5, b=10)][difficulty]
 
     update_board()
     window.update()
